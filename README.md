@@ -12,11 +12,6 @@ An unofficial API to easily obtain the interest rates of [BlockFi Interest Accou
 ```
 pip install blockfirates
 ```
-### Development
-Use [Poetry](https://python-poetry.org/) to create a virtual environment based on the `pyproject.toml` file:
-```
-poetry init
-```
 ### Imports
 ```
 from blockfirates import client
@@ -46,4 +41,14 @@ Client.get_amount("BTC (Tier 1)")
 Printing APY rate for a specific currency:
 ```
 Client.get_apy("BTC (Tier 1)")
+```
+
+### Development
+Use [Poetry](https://python-poetry.org/) to create a virtual environment based on the `pyproject.toml` file:
+```
+poetry init
+```
+Once changes have been committed the package can be updated:
+```
+poetry publish --build --username $PYPI_USERNAME --password $PYPI_PASSWORD
 ```

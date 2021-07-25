@@ -1,8 +1,12 @@
 [tool.poetry]
 name = "BlockFiRates"
-version = "0.2.0"
+version = "0.2.1"
 description = "Scrape the latest APY rates for BlockFi Interest Accounts"
 authors = ["P.G. Ó Slatara <pgoslatara@gmail.com>"]
+keywords = ["crypto", "python3", "blockfi"]
+license = "MIT"
+homepage = "https://github.com/pgoslatara/blockfirates"
+repository = "https://github.com/pgoslatara/blockfirates"
 
 [tool.poetry.dependencies]
 python = "^3.8"
