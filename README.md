@@ -1,3 +1,5 @@
+![PyPI - Python Version](https://img.shields.io/pypi/pyversions/blockfirates)
+
 # DISCLAIMER
 
 This package is in no way affiliated in any way, shape or form with BlockFi and as such its use is entirely at the user's own risk.
