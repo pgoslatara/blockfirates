@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "BlockFiRates"
-version = "0.2.2"
+version = "0.2.3"
 description = "Scrape the latest APY rates for BlockFi Interest Accounts"
 authors = ["P.G. Ó Slatara <pgoslatara@gmail.com>"]
 keywords = ["crypto", "python3", "blockfi"]
@@ -18,7 +18,7 @@ include = [
 ]
 
 [tool.poetry.dependencies]
-python = "^3.8"
+python = "^3.6"
 lxml = "^4.6.3"
 cloudscraper = "^1.2.58"
 
