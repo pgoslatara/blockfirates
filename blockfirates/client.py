@@ -36,7 +36,13 @@ class BlockFiRates:
     def _convert_amount_to_rule(self, AMOUNT, CURRENCY):
         amount = AMOUNT.replace(CURRENCY[:CURRENCY.find(" ")], "").replace(",", "").strip()
 
-        if amount.find("-") > 0:
+        if amount.find("-") > 0 and amount.find(">") == 0:
+            rule = {
+                "condition": "between",
+                "greater_than": float(amount[:amount.find("-")].replace(">", "").strip()),
+                "maximum": float(amount[amount.find("-") + 1:].strip())
+            }
+        elif amount.find("-") > 0:
             rule = {
                 "condition": "between",
                 "minimum": float(amount[:amount.find("-")].strip()),

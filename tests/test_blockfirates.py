@@ -3,7 +3,7 @@ from blockfirates.client import BlockFiRates
 
 
 def test_version():
-    assert __version__ == '0.2.3'
+    assert __version__ == '0.2.4'
 
 
 def test_rates_returned():
