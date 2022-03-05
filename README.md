@@ -50,7 +50,7 @@ Use [Poetry](https://python-poetry.org/) to create a virtual environment based o
 ```
 poetry init
 ```
-Once changes have been committed the package can be updated on both Github and PyPi:
+Once changes have been committed, create and merge to the master branch on Github and push the new version to PyPi:
 ```
 git push -u origin master
 
