@@ -53,6 +53,11 @@ class BlockFiRates:
                 "condition": "greater than",
                 "amount": float(amount.replace(">", "").strip())
             }
+        elif amount == "No Limit":
+            rule = {
+                "condition": "greater than",
+                "amount": 0
+            }
 
         return rule
 
