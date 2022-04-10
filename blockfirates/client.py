@@ -7,9 +7,9 @@ class BlockFiRates:
     __RATES_URL = "https://blockfi.com/page-data/rates/page-data.json"
 
     def get_all_rates(self):
-scraper = cloudscraper.create_scraper()
-html = scraper.get(BlockFiRates.__RATES_URL).content
-rate_data = json.loads(html)["result"]["data"]["contentfulComposePage"]["content"]["content"][1]["rowRates"]
+        scraper = cloudscraper.create_scraper()
+        html = scraper.get(BlockFiRates.__RATES_URL).content
+        rate_data = json.loads(html)["result"]["data"]["contentfulComposePage"]["content"]["content"][1]["rowRates"]
 
         rates = []
         for i in rate_data:
