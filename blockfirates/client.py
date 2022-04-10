@@ -1,40 +1,31 @@
-import lxml.html as lh
 import cloudscraper
 from decimal import Decimal
+import json
 
 
 class BlockFiRates:
-    __RATES_URL = "https://blockfi.com/rates/"
-    __XPATH = "//*[@id='gatsby-focus-wrapper']/section[1]/div/div/div/div[2]/table/tbody"
+    __RATES_URL = "https://blockfi.com/page-data/rates/page-data.json"
 
     def get_all_rates(self):
-        scraper = cloudscraper.create_scraper()
-        html = scraper.get(BlockFiRates.__RATES_URL).content
-        doc = lh.fromstring(html)
+scraper = cloudscraper.create_scraper()
+html = scraper.get(BlockFiRates.__RATES_URL).content
+rate_data = json.loads(html)["result"]["data"]["contentfulComposePage"]["content"]["content"][1]["rowRates"]
 
-        i = 1
-        end = 0
         rates = []
-        while end == 0:
-            try:
-                tr_elements = doc.xpath(f'{BlockFiRates.__XPATH}/tr[{i}]')
-                col = []
-                for t in tr_elements[0]:
-                    name = t.text_content()
-                    col.append(name)
-                rates.append({
-                    "Currency": col[0],
-                    "Amount": self._convert_amount_to_rule(col[1], col[0]),
-                    "APY": float(Decimal(col[2].replace("*", "").rstrip("%"))/100)
-                })
-                i += 1
-            except Exception as e:
-                end = 1
+        for i in rate_data:
+            currency_tier = i["column1Data"]
+            currency_name = currency_tier[:currency_tier.find(" ")] if currency_tier.find(" ") > 0 else currency_tier
+            currency_rate = i["column3Data"]
+            rates.append({
+                "Currency": currency_tier,
+                "Amount": self._convert_amount_to_rule(i["column2Data"], currency_name),
+                "APY": float(Decimal(currency_rate.replace("*", "").rstrip("%"))/100)
+            })
 
         return rates
 
     def _convert_amount_to_rule(self, AMOUNT, CURRENCY):
-        amount = AMOUNT.replace(CURRENCY[:CURRENCY.find(" ")], "").replace(",", "").strip()
+        amount = AMOUNT.replace(CURRENCY, "").replace(",", "").strip()
 
         if amount.find("-") > 0 and amount.find(">") == 0:
             rule = {
