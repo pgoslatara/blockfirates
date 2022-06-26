@@ -2,10 +2,6 @@ from blockfirates import __version__
 from blockfirates.client import BlockFiRates
 
 
-def test_version():
-    assert __version__ == '0.3.1'
-
-
 def test_rates_returned():
     assert len(BlockFiRates().get_all_rates()) > 0
 
