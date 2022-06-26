@@ -29,5 +29,8 @@ jobs:
         run: poetry install
         if: steps.cached-poetry-dependencies.outputs.cache-hit != 'true'
 
+      - name: Install pytest
+        run: pip install pytest
+
       - name: Run pytest
         run: pytest ./tests
