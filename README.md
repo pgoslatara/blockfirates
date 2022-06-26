@@ -54,5 +54,7 @@ Once changes have been committed, create and merge to the master branch on Githu
 ```
 git push -u origin master
 
+poetry version patch
+
 poetry publish --build --username $PYPI_USERNAME --password $PYPI_PASSWORD
 ```
