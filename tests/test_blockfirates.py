@@ -1,4 +1,3 @@
-from blockfirates import __version__
 from blockfirates.client import BlockFiRates
 
 
