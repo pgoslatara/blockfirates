@@ -1,5 +1,7 @@
 ![PyPI - Python Version](https://img.shields.io/pypi/pyversions/blockfirates)
 
+Scrape the latest APY rates for BlockFi Interest Accounts
+
 # DISCLAIMER
 
 This package is in no way affiliated in any way, shape or form with BlockFi and as such its use is entirely at the user's own risk.
@@ -46,15 +48,21 @@ Client.get_apy("BTC (Tier 1)")
 ```
 
 ### Development
-Use [Poetry](https://python-poetry.org/) to create a virtual environment based on the `pyproject.toml` file:
+Create a virtual environment using [virtualenv](https://pypi.org/project/virtualenv/), activate it and install necessary dependencies:
 ```
-poetry init
+python -m virtualenv env
+source venv/bin/activate
+pip install -r requirements.txt
+pip install -r requirements_dev.txt
+pip install -e .
 ```
 Once changes have been committed, create and merge to the master branch on Github and push the new version to PyPi:
 ```
 git push -u origin master
 
-poetry version patch
+python -m build
 
-poetry publish --build --username $PYPI_USERNAME --password $PYPI_PASSWORD
+twine check dist/*
+
+twine upload dist/* -u $PYPI_USERNAME -p $PYPI_PASSWORD
 ```
