@@ -36,7 +36,7 @@ setup(
     long_description_content_type="text/markdown",
     name="BlockFiRates",
     packages=find_packages(include=["blockfirates", "blockfirates.*"]),
-    python_requires=">=3.7.*,<=3.9.*",
+    python_requires=">=3.7.*,<=3.10.*",
     url="https://github.com/pgoslatara/blockfirates",
     version="0.4.0",
     install_requires=requirements,
