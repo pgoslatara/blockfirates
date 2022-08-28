@@ -24,8 +24,7 @@ Client=client.BlockFiRates()
 
 ## Available Functions
 * get_all_rates
-* get_amount
-* get_apy
+* get_info
 
 ## get_all_rates
 Printing info for all currencies:
@@ -35,17 +34,22 @@ for i in rates:
     print(i)
 ```
 
-## get_amount
-Printing amount criteria for a specific currency:
+## get_info
+Standard usage returns values for the "US" and for Tier 1:
 ```
-Client.get_amount("BTC (Tier 1)")
+Client.get_info(symbol="BTC")
 ```
 
-## get_apy
-Printing APY rate for a specific currency:
+To get non-US info (i.e. "row" values):
 ```
-Client.get_apy("BTC (Tier 1)")
+Client.get_info(symbol="BTC", category="row")
 ```
+
+To get info about other tiers:
+```
+Client.get_info(symbol="BTC", tier=2)
+```
+
 
 ### Development
 Create a virtual environment using [virtualenv](https://pypi.org/project/virtualenv/), activate it and install necessary dependencies:

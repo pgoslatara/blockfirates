@@ -1,74 +1,92 @@
 import cloudscraper
-from decimal import Decimal
+from functools import lru_cache
+import itertools
 import json
 
 
 class BlockFiRates:
+    def __init__(self) -> None:
+        pass
+
     __RATES_URL = "https://blockfi.com/page-data/rates/page-data.json"
 
-    def get_all_rates(self):
+    @lru_cache(None)
+    def get_all_rates(self) -> list:
         scraper = cloudscraper.create_scraper()
-        html = scraper.get(BlockFiRates.__RATES_URL).content
-        rate_data = json.loads(html)["result"]["data"]["contentfulComposePage"][
-            "content"
-        ]["content"][1]["rowRates"]
+        html = scraper.get(self.__RATES_URL).content
+        rate_data = []
+        for i in range(0, 10):
+            try:
+                rate_data.append(
+                    json.loads(html)["result"]["data"]["allContentfulComposePage"][
+                        "nodes"
+                    ][i]["content"]["assetList"]
+                )
+            except:
+                pass
 
-        rates = []
-        for i in rate_data:
-            currency_tier = i["column1Data"]
-            currency_name = (
-                currency_tier[: currency_tier.find(" ")]
-                if currency_tier.find(" ") > 0
-                else currency_tier
-            )
-            currency_rate = i["column3Data"]
-            rates.append(
-                {
-                    "Currency": currency_tier,
-                    "Amount": self._convert_amount_to_rule(
-                        i["column2Data"], currency_name
-                    ),
-                    "APY": float(
-                        Decimal(currency_rate.replace("*", "").rstrip("%")) / 100
-                    ),
-                }
-            )
+        # Combine and deduplicate
+        all_rates = list(itertools.chain.from_iterable(rate_data))
+        deduped_rates = [dict(t) for t in {tuple(d.items()) for d in all_rates}]
 
-        return rates
-
-    def _convert_amount_to_rule(self, AMOUNT, CURRENCY):
-        amount = AMOUNT.replace(CURRENCY, "").replace(",", "").strip()
-
-        if amount.find("-") > 0 and amount.find(">") == 0:
-            rule = {
-                "condition": "between",
-                "greater_than": float(
-                    amount[: amount.find("-")].replace(">", "").strip()
-                ),
-                "maximum": float(amount[amount.find("-") + 1 :].strip()),
+        return [
+            {
+                "asset_name": x["assetName"],
+                "enabled": x["rowEnableCoinInList"],
+                "row_data": {
+                    "no_tier_limit": x["rowNoTierLimit"],
+                    "tier_1": {
+                        "apy": x["rowTier1APY"],
+                        "amount_min": x.get("rowTier1AmountMinimum"),
+                        "amount_max": x.get("rowTier1AmountMaximum"),
+                    },
+                    "tier_2": {
+                        "apy": x["rowTier2APY"],
+                        "amount_min": x.get("rowTier2AmountMinimum"),
+                        "amount_max": x.get("rowTier2AmountMaximum"),
+                    },
+                    "tier_3": {
+                        "apy": x["rowTier3APY"],
+                        "amount_min": x.get("rowTier3AmountMinimum"),
+                        "amount_max": x.get("rowTier3AmountMaximum"),
+                    },
+                },
+                "symbol": x["ticker"].upper(),
+                "us_data": {
+                    "no_tier_limit": x["usNoTierLimit"],
+                    "tier_1": {
+                        "apy": x["usTier1APY"],
+                        "amount_min": x.get("usTier1AmountMinimum"),
+                        "amount_max": x.get("usTier1AmountMaximum"),
+                    },
+                    "tier_2": {
+                        "apy": x["usTier2APY"],
+                        "amount_min": x.get("usTier2AmountMinimum"),
+                        "amount_max": x.get("usTier2AmountMaximum"),
+                    },
+                    "tier_3": {
+                        "apy": x["usTier3APY"],
+                        "amount_min": x.get("usTier3AmountMinimum"),
+                        "amount_max": x.get("usTier3AmountMaximum"),
+                    },
+                },
             }
-        elif amount.find("-") > 0:
-            rule = {
-                "condition": "between",
-                "minimum": float(amount[: amount.find("-")].strip()),
-                "maximum": float(amount[amount.find("-") + 1 :].strip()),
-            }
-        elif amount.find(">") == 0:
-            rule = {
-                "condition": "greater than",
-                "amount": float(amount.replace(">", "").strip()),
-            }
-        elif amount == "No Limit":
-            rule = {"condition": "greater than", "amount": 0}
+            for x in deduped_rates
+        ]
 
-        return rule
+    def get_info(self, symbol: str, category: str = "us", tier: int = 1) -> dict:
+        assert category in {"row", "us"}, "Category must be 'row' or 'us'"
 
-    def get_amount(self, CURRENCY):
+        assert tier in {1, 2, 3}, "TIER must be 1, 2 or 3"
+
         rates = self.get_all_rates()
 
-        return [i for i in rates if i["Currency"] == CURRENCY][0]["Amount"]
+        raw_info = [i for i in rates if i["symbol"] == symbol][0]
 
-    def get_apy(self, CURRENCY):
-        rates = self.get_all_rates()
-
-        return [i for i in rates if i["Currency"] == CURRENCY][0]["APY"]
+        return {
+            "asset_name": raw_info["asset_name"],
+            "enabled": raw_info["enabled"],
+            "info": raw_info[f"{category}_data"][f"tier_{tier}"],
+            "no_tier_limit": raw_info[f"{category}_data"]["no_tier_limit"],
+            "symbol": raw_info["symbol"],
+        }
